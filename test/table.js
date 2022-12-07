@@ -1,6 +1,7 @@
 var Table = require("../src/table");
 var expect = require("chai").expect;
-const timer = require("timers/promises");
+const util = require("util");
+const setTimeoutPromise = util.promisify(setTimeout);
 
 describe("ProtoTable parsing", function() {
 
@@ -18,9 +19,10 @@ describe("ProtoTable parsing", function() {
 
   var table = new Table(protoTable);
 
-  let getRowData = async function(entry) {
-    const rowData = {cells: [entry["Product"], entry["Description"]]};
-    await timer.setTimeout(500);
+  let getRowData = function(entry) {
+    const rowData = setTimeoutPromise(1000, entry).then((value) => {
+      return {cells: [value["Product"], value["Description"]]};
+    });
     return rowData;
 
   };
